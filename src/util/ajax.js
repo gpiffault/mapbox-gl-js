@@ -169,7 +169,9 @@ export const makeRequest = function(requestParameters: RequestParameters, callba
     //   some versions (see https://bugs.webkit.org/show_bug.cgi?id=174980#c2)
     // - Requests for resources with the file:// URI scheme don't work with the Fetch API either. In
     //   this case we unconditionally use XHR on the current thread since referrers don't matter.
-    if (!/^file:/.test(requestParameters.url)) {
+    let protocol = /^[A-Za-z][A-Za-z0-9+-.]+:/.exec(requestParameters.url)
+    protocol = protocol !== null ? protocol[0] : location.protocol
+    if (protocol !== 'file:') {
         if (window.fetch && window.Request && window.AbortController && window.Request.prototype.hasOwnProperty('signal')) {
             return makeFetchRequest(requestParameters, callback);
         }
